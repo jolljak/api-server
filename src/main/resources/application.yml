@@ -7,3 +7,8 @@ spring:
         username: root
         password: dnsgkdtlf11
         driver-class-name: com.mysql.jdbc.Driver
+
+    server:
+        port: 8080
+        servlet:
+            context-path: /mina
