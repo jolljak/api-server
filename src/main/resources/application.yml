@@ -3,10 +3,10 @@ spring:
         name: mina
     
     datasource:
-        url: jdbc:mysql://localhost:3306?databaseName=mydb
-        username: root
-        password: dnsgkdtlf11
-        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:sqlserver://43.200.45.240:1433?databaseName=mina
+        username: sa
+        password: mina123!
+        driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
     server:
         port: 8080
