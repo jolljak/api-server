@@ -19,9 +19,9 @@ jobs:
           script: |
             cd /home/ubuntu/api-server
             git pull origin main
-            ./mvn clean install
+            ./mvnw clean package
             # 서버가 안돌가고 있으면 fuser 명령어가 실패하므로 || true 로 무시
             sudo fuser -k 8080 || true
             # 표준출력
-            nohup java -jar build/libs/*SNAPSHOT.jar > ./output.log 2>&1 & 
+            nohup java -jar target/*SNAPSHOT.jar > ./output.log 2>&1 & 
             
