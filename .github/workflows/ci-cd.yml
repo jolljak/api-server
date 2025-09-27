@@ -19,6 +19,7 @@ jobs:
           script: |
             cd /home/ubuntu/api-server
             git pull origin main
+            chmod +x mvnw
             ./mvnw clean package
             # 서버가 안돌가고 있으면 fuser 명령어가 실패하므로 || true 로 무시
             sudo fuser -k 8080 || true
