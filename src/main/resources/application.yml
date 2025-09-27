@@ -12,3 +12,4 @@ spring:
         port: 8080
         servlet:
             context-path: /mina
+    
