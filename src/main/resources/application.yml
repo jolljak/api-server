@@ -2,14 +2,26 @@ spring:
     application:
         name: mina
     
+    # DB 설정
     datasource:
         url: jdbc:sqlserver://43.200.45.240:1433?databaseName=mina
         username: sa
         password: mina123!
         driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
+    # 서버 설정
     server:
         port: 8080
         servlet:
             context-path: /mina
-    
+
+    # MyBatis 설정
+    mybatis:
+        mapper-locations: classpath:mapper/**/*.xml
+        type-aliases-package: com.tuk.mina.vo
+        
+
+# 로깅            
+logging:
+    level:
+        org.springframework.security: DEBUG
