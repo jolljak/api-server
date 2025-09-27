@@ -1,4 +1,4 @@
-package com.tuk.mina.ctl;
+package com.tuk.mina.api.ctl;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
