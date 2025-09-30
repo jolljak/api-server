@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@Alias("TbProjectVo")
+@Alias("TbProjectServiceMapVo")
 public class TbProjectServiceMapVo {
 
     private String serviceId;

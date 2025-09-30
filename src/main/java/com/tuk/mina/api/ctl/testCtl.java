@@ -10,5 +10,4 @@ public class testCtl {
     public String test() {
         return "Hello, World!";
     }
-    
 }
