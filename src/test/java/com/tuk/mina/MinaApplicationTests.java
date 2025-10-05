@@ -8,6 +8,7 @@ class MinaApplicationTests {
 
 	@Test
 	void contextLoads() {
+		
 	}
 
 }
