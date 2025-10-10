@@ -17,5 +17,4 @@ public class TbProjectServiceMapVo {
     private String createUserId;
     private String createDttm;
     private String updatedDttm;
-    
 }
