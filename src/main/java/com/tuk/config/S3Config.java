@@ -34,4 +34,5 @@ public class S3Config {
             throw new IllegalArgumentException("AWS 자격 증명 또는 리전 설정에 문제가 있습니다.", e);
         }
     }
+    
 }
