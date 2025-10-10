@@ -24,7 +24,7 @@ jobs:
             rm -rf /src/main/resources/application.yml
             git pull origin main
             chmod +x mvnw
-            echo $APPLICATION_PROPERTIES > src/main/resources/application.yml
+            echo "$APPLICATION_PROPERTIES" > src/main/resources/application.yml
             ./mvnw clean package
             # 서버가 안돌가고 있으면 fuser 명령어가 실패하므로 || true 로 무시
             sudo fuser -k 8080 || true
