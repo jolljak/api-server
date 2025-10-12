@@ -43,6 +43,7 @@ public class userSvc {
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         String jwt = tokenProvider.generateToken(authentication);
         return new TokenDto("Bearer", jwt);
+        
     }
 
     @Transactional
