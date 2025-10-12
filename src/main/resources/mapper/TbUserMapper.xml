@@ -3,7 +3,42 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.tuk.mina.dao.user.TbUserDao">
-        <select id="findById" parameterType="int" resultType="TbUserVo">
-        SELECT * FROM tb_user WHERE id = #{id}
-    </select>
+
+        <select id="getUser" resultType="TbUserVo">
+                SELECT * 
+                FROM TB_MINA_USER_L 
+                WHERE 1=1 
+                <if test="userId != null and userId != ''">
+                AND userId = #{userId}
+                </if>
+                <if test="userPw != null and userPw != ''">
+                AND userPw = #{userPw}
+                </if>
+                <if test="userName != null and userName != ''">
+                AND userName = #{userName}
+                </if>
+                <if test="email != null and email != ''">
+                AND email = #{email}
+                </if>
+                <if test="userPhone != null and userPhone != ''">
+                AND userPhone = #{userPhone}
+                </if>
+                <if test="userBirth != null and userBirth != ''">
+                AND userBirth = #{userBirth}
+                </if>
+                <if test="createDttm != null and createDttm != ''">
+                AND createDttm = #{createDttm}
+                </if>
+                <if test="updatedDttm != null and updatedDttm != ''">
+                AND updatedDttm = #{updatedDttm}
+                </if>
+        </select>
+        
+        <insert id="newUser" parameterType="TbUserVo">
+                IF NOT EXISTS (SELECT 1 FROM TB_MINA_USER_L WHERE userId = #{userId})
+                BEGIN
+                        INSERT INTO TB_MINA_USER_L (userId, userPw, userName, email, userPhone, userBirth, createDttm, updatedDttm) 
+                        VALUES (#{userId}, #{userPw}, #{userName}, #{email}, #{userPhone}, #{userBirth}, GETDATE(), GETDATE()) 
+                END
+        </insert>
 </mapper>
