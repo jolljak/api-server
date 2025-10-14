@@ -31,9 +31,6 @@ public class SecurityConfig {
                 .anyRequest().authenticated()) // 모든 요청 인증 요구
             .formLogin(form -> form.disable()) // 기본 로그인 화면 비활성화
             .httpBasic(httpBasic -> httpBasic.disable()) // HTTP 기본 인증 비활성화
-            .exceptionHandling(exception -> exception.authenticationEntryPoint((request, response, authException) -> {
-                response.sendError(403, "Forbidden"); // 인증되지 않은 요청에 대해 403 응답
-            }))
             // 직접 만든 JWT 필터를 UsernamePasswordAuthenticationFilter 앞에 추가
             .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
