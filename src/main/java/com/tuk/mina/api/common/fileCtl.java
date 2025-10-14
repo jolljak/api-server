@@ -14,8 +14,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/upload")
+@Tag(name = "File Controller", description = "파일 관련 API")
 public class fileCtl {
 
     private final AmazonS3 amazonS3;
@@ -25,8 +29,10 @@ public class fileCtl {
 
     public fileCtl(AmazonS3 amazonS3) {
         this.amazonS3 = amazonS3;
-    }    
+    }
+
     @PostMapping
+    @Operation(summary = "file upload", description = "S3 파일 업로드")
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
         try {
             String fileName = file.getOriginalFilename();
