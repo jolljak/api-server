@@ -38,4 +38,5 @@ public class SwaggerConfig {
             .description("MINA API 명세서")
             .version("v1.0");
     }
+    
 }
