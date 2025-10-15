@@ -27,7 +27,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/user/login", "/api/user/signup").permitAll() // 로그인 및 회원가입은 모두 허용
+                .requestMatchers("**/api/user/login", "**/api/user/signup").permitAll() // 로그인 및 회원가입은 모두 허용
                 .anyRequest().authenticated()) // 모든 요청 인증 요구
             .formLogin(form -> form.disable()) // 기본 로그인 화면 비활성화
             .httpBasic(httpBasic -> httpBasic.disable()) // HTTP 기본 인증 비활성화
