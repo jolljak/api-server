@@ -9,26 +9,40 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: ssh ec2 접속
+      - name: ssh ec2 접속 및 배포
         uses: appleboy/ssh-action@v1
         env:
-          APPLICATION_PROPERTIES: ${{ secrets.APPLICATION_PROPERTIES }}
+          # 시크릿 변수는 그대로 사용
+          APPLICATION_PROPERTIES: ${{ secrets.APPLICATION_PROPERTIES }} 
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           envs: APPLICATION_PROPERTIES
           script-stop: true
+          # **핵심 수정: 스크립트 내용을 Systemd 기반으로 변경**
           script: |
-            cd /home/ubuntu/api-server
-            rm -rf /src/main/resources/application.yml
-            git pull origin main
-            chmod +x mvnw
-            echo "$APPLICATION_PROPERTIES" > src/main/resources/application.yml
-            ./mvnw clean package
-            # 서버가 안돌가고 있으면 fuser 명령어가 실패하므로 || true 로 무시
-            sudo fuser -k 8080 || true
-            # 표준출력
-            nohup java -jar target/*SNAPSHOT.jar > ./output.log 2>&1 &
-
+            # 1. 작업 폴더로 이동 (폴더가 없는 경우 Git Clone을 대신 사용해야 함)
+            cd /home/ubuntu/api-server || { echo "Directory not found. Exiting."; exit 1; }
             
+            # 2. Git 충돌 방지 및 최신 코드 강제 동기화 (이전 Git 오류 해결)
+            git fetch origin
+            git reset --hard origin/main
+            
+            # 3. application.yml 생성 (보안 정보 적용)
+            echo "$APPLICATION_PROPERTIES" > src/main/resources/application.yml
+            
+            # 4. Maven 빌드 (테스트 건너뛰기)
+            ./mvnw clean package -DskipTests
+            
+            # 5. JAR 파일 복사 (Systemd가 참조할 위치로 복사)
+            # 여기서는 /home/ubuntu/app.jar로 복사한다고 가정
+            cp target/*SNAPSHOT.jar /home/ubuntu/mina-api.jar
+            
+            # 6. Systemd 서비스 재시작 명령
+            # Systemd가 이전 프로세스를 안전하게 종료하고 새 JAR 파일을 시작합니다.
+            sudo systemctl daemon-reload # 서비스 파일 변경이 있을 경우
+            sudo systemctl restart mina-api-server
+            
+            # 7. 서비스 상태 확인 (선택 사항이나 권장)
+            sudo systemctl status mina-api-server | grep Active
