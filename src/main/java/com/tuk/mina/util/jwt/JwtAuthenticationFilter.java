@@ -3,6 +3,7 @@ package com.tuk.mina.util.jwt;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
@@ -25,7 +26,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         String token = resolveToken((HttpServletRequest)request);
         if (token != null && tokenProvider.validateToken(token)) {
             // 토큰이 유효하면 토큰으로부터 인증 정보를 가져와 SecurityContext에 저장
-            var authentication = tokenProvider.getAuthentication(token);
+            Authentication authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         chain.doFilter(request, response);
