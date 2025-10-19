@@ -12,8 +12,9 @@ import lombok.ToString;
 @Alias("TbServiceVo")
 public class TbServiceVo {
 
-    private String serviceId;
+    private Integer serviceId;
     private String serviceName;
+    private String iconPath;
     private String createUserId;
     private String createDttm;
     private String updatedDttm;
