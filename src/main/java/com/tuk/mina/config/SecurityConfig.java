@@ -3,6 +3,7 @@ package com.tuk.mina.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -33,6 +34,9 @@ public class SecurityConfig {
                     "swagger-resources/**", 
                     "/api/user/login", 
                     "/api/user/signup").permitAll() // 로그인 및 회원가입은 모두 허용
+                .requestMatchers(
+                    HttpMethod.OPTIONS, // OPTIONS (서버에게 해당 URL에서 어떤 메서드가 허용되는지 묻는 요청)
+                    "/**").permitAll()  // CORS Preflight 요청 허용
                 .anyRequest().authenticated()) // 모든 요청 인증 요구
             .formLogin(form -> form.disable()) // 기본 로그인 화면 비활성화
             .httpBasic(httpBasic -> httpBasic.disable()) // HTTP 기본 인증 비활성화
