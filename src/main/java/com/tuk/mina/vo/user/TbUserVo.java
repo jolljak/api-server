@@ -42,4 +42,8 @@ public class TbUserVo implements UserDetails{
         return this.userId;
     }
 
+    public String getUserStringName() {
+        return this.userName;
+    }
+
 }

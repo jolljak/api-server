@@ -1,5 +1,7 @@
 package com.tuk.mina.api.svc.user;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,8 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tuk.mina.dao.user.TbUserDao;
 import com.tuk.mina.dto.jwt.TokenDto;
 import com.tuk.mina.dto.user.UserDto;
+import com.tuk.mina.dto.user.UserResponseDto;
+import com.tuk.mina.util.SecurityUtil;
 import com.tuk.mina.util.jwt.JwtTokenProvider;
 import com.tuk.mina.vo.user.TbUserVo;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,6 +34,9 @@ public class userSvc {
 
     @Autowired
     private TbUserDao userDao;
+
+    @Autowired
+    private SecurityUtil securityUtil;
 
     @Transactional
     public TokenDto login(UserDto loginInfo) {
@@ -54,5 +62,27 @@ public class userSvc {
         
         user.setUserPw(pwEncoder.encode(user.getUserPw()));
         userDao.newUser(user);
+    }
+
+    public UserResponseDto getCurrentUser() {
+        TbUserVo userParam = new TbUserVo();
+        userParam.setUserId(securityUtil.getAuthUserId().get());
+
+        List<TbUserVo> users = userDao.getUser(userParam);
+        if (users.isEmpty()) {
+            throw new UsernameNotFoundException("Authenticated user not found in database.");
+        }
+        TbUserVo currentUserVo = users.get(0);
+
+        UserResponseDto userRes = new UserResponseDto();
+        userRes.setUserId(currentUserVo.getUserId());
+        userRes.setUserName(currentUserVo.getUserStringName());
+        userRes.setEmail(currentUserVo.getEmail());
+        userRes.setUserPhone(currentUserVo.getUserPhone());
+        userRes.setUserBirth(currentUserVo.getUserBirth());
+        userRes.setCreatedDttm(currentUserVo.getCreateDttm());
+        userRes.setUpdatedDttm(currentUserVo.getUpdatedDttm());
+
+        return userRes;
     }
 }
