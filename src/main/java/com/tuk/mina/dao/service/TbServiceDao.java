@@ -12,6 +12,6 @@ public interface TbServiceDao {
     public List<TbServiceVo>    getService(TbServiceVo param);
     public void                 newService(TbServiceVo param);
     public void                 putService(TbServiceVo param);
-    public void                 delService(String param); 
+    public void                 delService(Integer projectId); 
 
 }

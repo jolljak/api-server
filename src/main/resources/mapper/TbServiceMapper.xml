@@ -46,7 +46,7 @@
                 WHERE serviceId = #{serviceId}
         </update>
 
-        <delete id="delService" parameterType="String">
+        <delete id="delService" parameterType="Integer">
                 <if test="serviceId != null and serviceId != ''">
                         DELETE FROM TB_MINA_SERVICE_L 
                         WHERE serviceId = #{serviceId}
