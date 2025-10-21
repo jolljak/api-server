@@ -1,4 +1,4 @@
-package com.tuk.mina.vo;
+package com.tuk.mina.vo.record;
 import org.apache.ibatis.type.Alias;
 
 import lombok.Getter;
