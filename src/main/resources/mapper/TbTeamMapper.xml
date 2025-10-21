@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuk.mina.dao.team.TbTeamDao">
+
+        <select id="getTeam" resultType="TbTeamVo">
+                SELECT *
+                FROM TB_MINA_TEAM_L
+                WHERE 1=1
+                <if test="teamId != null">
+                        AND teamId = #{teamId}
+                </if>
+                <if test="teamName != null and teamName != ''">
+                        AND teamName LIKE CONCAT('%', #{teamName}, '%')
+                </if>
+                <if test="teamLeaderId != null and teamLeaderId != ''">
+                        AND teamLeaderId = #{teamLeaderId}
+                </if>
+                <if test="teamDesc != null and teamDesc != ''">
+                        AND teamDesc LIKE CONCAT('%', #{teamDesc}, '%')
+                </if>
+                <if test="createdUserId != null and createdUserId != ''">
+                        AND createdUserId = #{createdUserId}
+                </if>
+                <if test="updatedUserId != null and updatedUserId != ''">
+                        AND updatedUserId = #{updatedUserId}
+                </if>
+                <if test="createDttm != null and createDttm != ''">
+                        AND createDttm = #{createDttm}
+                </if>
+                <if test="updatedDttm != null and updatedDttm != ''">
+                        AND updatedDttm = #{updatedDttm}
+                </if>
+        </select>
+
+        <insert id="newTeam" parameterType="TbTeamVo">
+                INSERT INTO TB_MINA_TEAM_L (teamName, teamLeaderId, teamDesc, createdUserId, updatedUserId, createDttm, updatedDttm)
+                VALUES (#{teamName}, #{teamLeaderId}, #{teamDesc}, #{createdUserId}, #{updatedUserId}, GETDATE(), GETDATE())
+        </insert>
+
+        <update id="putTeam" parameterType="TbTeamVo">
+                UPDATE TB_MINA_TEAM_L
+                SET
+                <if test="teamName != null and teamName != ''">
+                        teamName = #{teamName},
+                </if>
+                <if test="teamLeaderId != null and teamLeaderId != ''">
+                        teamLeaderId = #{teamLeaderId},
+                </if>
+                <if test="teamDesc != null and teamDesc != ''">
+                        teamDesc = #{teamDesc},
+                </if>
+                updatedUserId = #{updatedUserId},
+                updatedDttm = GETDATE()
+                WHERE teamId = #{teamId}
+        </update>
+
+        <delete id="delTeam">
+                DELETE FROM TB_MINA_TEAM_L
+                WHERE teamId = #{param}
+        </delete>
+</mapper>
