@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuk.mina.dao.project.TbProjectDao">
+
+        <select id="getProject" resultType="TbProjectVo">
+                SELECT * 
+                FROM TB_MINA_PROJECT_L 
+                WHERE 1=1 
+                <if test="projectId != null and projectId != ''">
+                        AND projectId = #{projectId}
+                </if>
+                <if test="teamId != null and teamId != ''">
+                        AND teamId = #{teamId}
+                </if>
+                <if test="teamId != null and teamId != ''">
+                        AND teamId = #{teamId}
+                </if>
+                <if test="projectName != null and projectName != ''">
+                        AND projectName = #{projectName}
+                </if>
+                <if test="description != null and description != ''">
+                        AND description LIKE #{description}
+                </if>
+                <if test="teamName != null and teamName != ''">
+                        AND teamName = #{teamName}
+                </if>
+                <if test="projectRole != null and projectRole != ''">
+                        AND projectRole = #{projectRole}
+                </if>
+                <if test="isDone != null and isDone != ''">
+                        AND isDone = #{isDone}
+                </if>
+                <if test="createdUserId != null and createdUserId != ''">
+                        AND createdUserId = #{createdUserId}
+                </if>
+                <if test="updatedUserId != null and updatedUserId != ''">
+                        AND updatedUserId = #{updatedUserId}
+                </if>
+                <if test="createDttm != null and createDttm != ''">
+                        AND createDttm = #{createDttm}
+                </if>
+                <if test="updatedDttm != null and updatedDttm != ''">
+                        AND updatedDttm = #{updatedDttm}
+                </if>
+        </select>
+
+        <insert id="newProject" parameterType="TbProjectVo">
+                INSERT INTO TB_MINA_PROJECT_L (teamId, projectName, description, teamName, projectRole, isDone, createdUserId, updatedUserId, createDttm, updatedDttm) 
+                VALUES (#{teamId}, #{projectName}, #{description}, #{teamName}, #{projectRole}, #{isDone}, #{createdUserId}, #{updatedUserId}, GETDATE(), GETDATE())
+        </insert>
+
+        <update id="putProject" parameterType="TbProjectVo">
+                UPDATE TB_MINA_PROJECT_L 
+                SET 
+                <if test="teamId != null and teamId != ''">
+                        teamId = #{teamId},
+                </if>
+                 <if test="projectName != null and projectName != ''">
+                        projectName = #{projectName},
+                </if>
+                 <if test="description != null and description != ''">
+                        description = #{description},
+                </if>
+                <if test="teamName != null and teamName != ''">
+                        teamName = #{teamName},
+                </if>
+                 <if test="projectRole != null and projectRole != ''">
+                        projectRole = #{projectRole},
+                </if>
+                 <if test="isDone != null and isDone != ''">
+                        isDone = #{isDone},
+                </if>
+                updatedUserId = #{updatedUserId},
+                updatedDttm = GETDATE()
+                WHERE projectId = #{projectId}
+        </update>
+
+        <delete id="delProject">
+                <if test="projectId != null and projectId != ''">
+                        DELETE FROM TB_MINA_PROJECT_L 
+                        WHERE projectId = #{projectId}
+                </if>
+        </delete>
+</mapper>
