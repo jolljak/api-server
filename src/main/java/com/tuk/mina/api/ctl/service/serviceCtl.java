@@ -60,7 +60,7 @@ public class serviceCtl {
 
     @DeleteMapping
     @Operation(summary = "Delete Service", description = "서비스 삭제 API")
-    public ResponseEntity<String> delService(@RequestParam("serviceId") String serviceId) {
+    public ResponseEntity<String> delService(@RequestParam("serviceId") Integer serviceId) {
         serviceDao.delService(serviceId);
         return ResponseEntity.ok("서비스가 삭제되었습니다.");
     }
