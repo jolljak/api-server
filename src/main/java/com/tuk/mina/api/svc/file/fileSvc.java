@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Service
-@Transactional(readOnly = true)
 public class fileSvc {
 
     private final AmazonS3 amazonS3;
