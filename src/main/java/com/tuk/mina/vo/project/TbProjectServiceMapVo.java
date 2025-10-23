@@ -12,8 +12,8 @@ import lombok.ToString;
 @Alias("TbProjectServiceMapVo")
 public class TbProjectServiceMapVo {
 
-    private String serviceId;
-    private String projectId;
+    private Integer serviceId;
+    private Integer projectId;
     private String createUserId;
     private String createDttm;
     private String updatedDttm;
