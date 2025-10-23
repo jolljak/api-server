@@ -64,7 +64,7 @@
                 WHERE taskId = #{taskId}
         </update>
 
-        <delete id="delTask">
+        <delete id="delTask" parameterType="Integer">
                 DELETE FROM TB_MINA_TASK_L
                 WHERE taskId = #{taskId}
         </delete>

@@ -60,7 +60,7 @@ public class taskCtl {
 
     @DeleteMapping
     @Operation(summary = "Delete Task", description = "업무 삭제 API")
-    public ResponseEntity<String> delTask(@RequestParam("taskId") String taskId) {
+    public ResponseEntity<String> delTask(@RequestParam("taskId") Integer taskId) {
         taskDao.delTask(taskId);
         return ResponseEntity.ok("업무가 삭제되었습니다.");
     }

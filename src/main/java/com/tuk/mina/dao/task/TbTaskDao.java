@@ -12,6 +12,6 @@ public interface TbTaskDao {
     public List<TbTaskVo>    getTask(TbTaskVo param);
     public void                 newTask(TbTaskVo param);
     public void                 putTask(TbTaskVo param);
-    public void                 delTask(String taskId);
+    public void                 delTask(Integer taskId);
 
 }
