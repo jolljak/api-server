@@ -1,8 +1,12 @@
 package com.tuk.mina.api.common;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.tuk.mina.api.svc.file.fileSvc;
+import com.tuk.mina.dao.file.TbFileDao;
+import com.tuk.mina.vo.file.TbFileVo;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,17 +20,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/file")
 @Tag(name = "File Controller", description = "파일 관련 API")
+@RequiredArgsConstructor
 public class fileCtl {
 
     private final fileSvc fileService;
+    private final TbFileDao fileDao;
 
-    public fileCtl(fileSvc fileService) {
-        this.fileService = fileService;
-    }
 
     @PostMapping("/upload")
     @Operation(summary = "file upload", description = "S3 파일 업로드")
@@ -60,4 +64,10 @@ public class fileCtl {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    @GetMapping("/metadata")
+    public ResponseEntity<List<TbFileVo>> getFileMetadata(TbFileVo param) {
+        return ResponseEntity.ok(fileDao.getFile(param));
+    }
+    
 }

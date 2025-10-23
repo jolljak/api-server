@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuk.mina.dao.service.TbFileDao">
+
+        <select id="getFile" resultType="TbFileVo">
+                SELECT * 
+                FROM TB_MINA_FILE_L 
+                WHERE 1=1 
+                <if test="fileId != null and fileId != ''">
+                        AND fileId = #{fileId}
+                </if>
+                <if test="fileSize != null and fileSize != ''">
+                        AND fileSize = #{fileSize}
+                </if>
+                <if test="fileName != null and fileName != ''">
+                        AND fileName = #{fileName}
+                </if>
+                <if test="fileExt != null and fileExt != ''">
+                        AND fileExt = #{fileExt}
+                </if>
+                <if test="createUserId != null and createUserId != ''">
+                        AND createUserId = #{createUserId}
+                </if>
+                <if test="createDttm != null and createDttm != ''">
+                        AND createDttm = #{createDttm}
+                </if>
+                <if test="updatedDttm != null and updatedDttm != ''">
+                        AND updatedDttm = #{updatedDttm}
+                </if>
+        </select>
+
+        <insert id="newSFile" parameterType="TbFileVo">
+                INSERT INTO TB_MINA_FILE_L (fileSize, fileName, fileExt, createUserId, createDttm, updatedDttm) 
+                VALUES (#{fileSize}, #{fileName}, #{fileExt}, #{createUserId}, GETDATE(), GETDATE()) 
+        </insert>
+
+        <update id="putFile" parameterType="TbFileVo">
+                <if test="fileId != null and fileId != ''">
+                        UPDATE TB_MINA_FILE_L 
+                        SET 
+                        <if test="fileSize != null and fileSize != ''">
+                                fileSize = #{fileSize},
+                        </if>
+                        <if test="fileName != null and fileName != ''">
+                                fileName = #{fileName},
+                        </if>
+                        <if test="fileExt != null and fileExt != ''">
+                                fileExt = #{fileExt},
+                        </if>
+                        updatedDttm = GETDATE()
+                        WHERE fileId = #{fileId}
+                </if>
+        </update>
+
+        <delete id="delFile" parameterType="Integer">
+                <if test="fileId != null and fileId != ''">
+                        DELETE FROM TB_MINA_FILE_L 
+                        WHERE fileId = #{fileId}
+                </if>
+        </delete>
+</mapper>

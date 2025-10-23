@@ -12,7 +12,7 @@ import lombok.ToString;
 @Alias("TbTaskVo")
 public class TbTaskVo {
     private Integer taskId;
-    private String projectId;
+    private Integer projectId;
     private String taskStatusId;
     private String userId;
     private String taskContent;
