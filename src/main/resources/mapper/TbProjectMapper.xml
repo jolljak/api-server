@@ -7,7 +7,7 @@
         <select id="getProject" resultType="TbProjectVo">
                 SELECT * 
                 FROM TB_MINA_PROJECT_L 
-                WHERE 1=1 
+                WHERE 1=1
                 <if test="projectId != null and projectId != ''">
                         AND projectId = #{projectId}
                 </if>
