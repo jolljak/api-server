@@ -12,8 +12,8 @@ import lombok.ToString;
 @Alias("TbTaskHistVo")
 public class TbTaskHistVo {
 
-    private String taskId;
-    private String projectId;
+    private Integer taskId;
+    private Integer projectId;
     private String taskStatusId;
     private String userId;
     private String taskContent;

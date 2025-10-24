@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuk.mina.dao.task.TbTaskDao">
+
+        <select id="getTask" resultType="TbTaskVo">
+                SELECT *
+                FROM TB_MINA_TASK_L
+                WHERE 1=1
+                <if test="taskId != null and taskId != ''">
+                        AND taskId = #{taskId}
+                </if>
+                <if test="projectId != null and projectId != ''">
+                        AND projectId = #{projectId}
+                </if>
+                <if test="taskStatusId != null and taskStatusId != ''">
+                        AND taskStatusId = #{taskStatusId}
+                </if>
+                <if test="userId != null and userId != ''">
+                        AND userId = #{userId}
+                </if>
+                <if test="taskContent != null and taskContent != ''">
+                        AND taskContent LIKE CONCAT('%', #{taskContent}, '%')
+                </if>
+                <if test="isDone != null">
+                        AND isDone = #{isDone}
+                </if>
+                <if test="createUserId != null and createUserId != ''">
+                        AND createUserId = #{createUserId}
+                </if>
+                <if test="createdDttm != null and createdDttm != ''">
+                        AND createdDttm = #{createdDttm}
+                </if>
+                <if test="updatedDttm != null and updatedDttm != ''">
+                        AND updatedDttm = #{updatedDttm}
+                </if>
+        </select>
+
+        <insert id="newTask" parameterType="TbTaskVo">
+                INSERT INTO TB_MINA_TASK_L (projectId, taskStatusId, userId, taskContent, isDone, createUserId, createdDttm, updatedDttm)
+                VALUES (#{projectId}, #{taskStatusId}, #{userId}, #{taskContent}, #{isDone}, #{createUserId}, GETDATE(), GETDATE())
+        </insert>
+
+        <update id="putTask" parameterType="TbTaskVo">
+                UPDATE TB_MINA_TASK_L
+                SET
+                <if test="projectId != null and projectId != ''">
+                        projectId = #{projectId},
+                </if>
+                <if test="taskStatusId != null and taskStatusId != ''">
+                        taskStatusId = #{taskStatusId},
+                </if>
+                <if test="userId != null and userId != ''">
+                        userId = #{userId},
+                </if>
+                <if test="taskContent != null and taskContent != ''">
+                        taskContent = #{taskContent},
+                </if>
+                <if test="isDone != null">
+                        isDone = #{isDone},
+                </if>
+                updatedDttm = GETDATE()
+                WHERE taskId = #{taskId}
+        </update>
+
+        <delete id="delTask" parameterType="Integer">
+                DELETE FROM TB_MINA_TASK_L
+                WHERE taskId = #{taskId}
+        </delete>
+</mapper>

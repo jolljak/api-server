@@ -11,8 +11,7 @@ import lombok.ToString;
 @Alias("TbFileVo")
 public class TbFileVo {
 
-    private String fileId;
-    private String filePath;
+    private Integer fileId;
     private String fileSize;
     private String fileName;
     private String fileExt;
