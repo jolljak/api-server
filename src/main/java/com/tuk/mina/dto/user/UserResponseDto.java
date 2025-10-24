@@ -1,5 +1,7 @@
 package com.tuk.mina.dto.user;
 
+import com.tuk.mina.vo.team.TbTeamVo;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,4 +19,5 @@ public class UserResponseDto {
     private String createdDttm;
     private String updatedDttm;
     
+    private TbTeamVo team;
 }
