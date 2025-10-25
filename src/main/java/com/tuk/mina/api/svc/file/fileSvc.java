@@ -11,12 +11,10 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +23,7 @@ public class fileSvc {
     private final AmazonS3 amazonS3;
 
     private final TbFileDao fileDao;
+    
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -45,7 +44,7 @@ public class fileSvc {
         fileParam.setFileSize(String.valueOf(file.getSize()));
         fileParam.setFileExt(file.getContentType());
         fileDao.newFile(fileParam);
-        
+
         return String.format("https://%s.s3.%s.amazonaws.com/%s",
                 bucket, amazonS3.getRegionName(), fileName);
     }
