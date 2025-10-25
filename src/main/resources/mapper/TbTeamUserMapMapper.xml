@@ -39,23 +39,23 @@
         <update id="putTeamUserMap" parameterType="TbTeamUserMapVo">
                 UPDATE TB_MINA_TEAM_USER_M
                 SET
-                <if test="memberRole != null and memberRole != ''">
-                        memberRole = #{memberRole},
-                </if>
-                <if test="memberStatus != null and memberStatus != ''">
-                        memberStatus = #{memberStatus},
-                </if>
-                <if test="memberNick != null and memberNick != ''">
-                        memberNick = #{memberNick},
-                </if>
-                updatedDttm = GETDATE()
+                        <if test="memberRole != null and memberRole != ''">
+                                memberRole = #{memberRole},
+                        </if>
+                        <if test="memberStatus != null and memberStatus != ''">
+                                memberStatus = #{memberStatus},
+                        </if>
+                        <if test="memberNick != null and memberNick != ''">
+                                memberNick = #{memberNick},
+                        </if>
+                        updatedDttm = GETDATE()
                 WHERE teamId = #{teamId} AND userId = #{userId}
         </update>
 
         <delete id="delTeamUserMap">
-                <if test="teamId == null AND teamId == '' AND userId == null AND userId == '' ">
-                        
-                DELETE FROM TB_MINA_TEAM_USER_M
-                WHERE teamId = #{teamId} AND userId = #{userId}
+                <if test="teamId == null AND teamId == '' AND userId == null AND userId == '' ">        
+                        DELETE FROM TB_MINA_TEAM_USER_M
+                        WHERE teamId = #{teamId} AND userId = #{userId}
+                </if>
         </delete>
 </mapper>

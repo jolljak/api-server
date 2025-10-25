@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.amazonaws.Response;
+import com.tuk.mina.api.svc.team.TeamSvc;
 import com.tuk.mina.dao.team.TbTeamDao;
 import com.tuk.mina.util.SecurityUtil;
+import com.tuk.mina.vo.team.TbTeamUserMapVo;
 import com.tuk.mina.vo.team.TbTeamVo;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,6 +36,9 @@ public class teamCtl {
 
     @Autowired
     private TbTeamDao teamDao;
+
+    @Autowired
+    private TeamSvc teamSvc;
 
     @Autowired
     private SecurityUtil securityUtil;
@@ -66,4 +72,12 @@ public class teamCtl {
         teamDao.delTeam(teamId);
         return ResponseEntity.ok("팀이 삭제되었습니다.");
     }
+
+    @PostMapping("/member")
+    @Operation(summary = "Add Team Member", description = "팀 멤버 추가 API (team user mapping api)")
+    public ResponseEntity<String> newTeamMember(@RequestBody List<TbTeamUserMapVo> param) {
+        teamSvc.newTeamUserMap(param);
+        return ResponseEntity.ok("팀 멤버가 추가되었습니다.");
+    }
+    
 }
