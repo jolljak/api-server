@@ -13,7 +13,7 @@ public class TbFileVo {
 
     private Integer fileId;
     private String filePath;
-    private Integer fileSize;
+    private Long fileSize;
     private String fileName;
     private String fileExt;
     private String createUserId;

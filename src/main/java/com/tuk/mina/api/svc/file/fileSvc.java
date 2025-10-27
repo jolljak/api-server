@@ -41,7 +41,7 @@ public class fileSvc {
         amazonS3.putObject(bucket, fileName, file.getInputStream(), metadata);
 
         fileParam.setFileName(fileName);
-        fileParam.setFileSize(String.valueOf(file.getSize()));
+        fileParam.setFileSize(file.getSize());
         fileParam.setFileExt(file.getContentType());
         fileDao.newFile(fileParam);
 
