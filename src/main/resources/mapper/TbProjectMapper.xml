@@ -26,9 +26,6 @@
                 <if test="teamName != null and teamName != ''">
                         AND teamName = #{teamName}
                 </if>
-                <if test="projectRole != null and projectRole != ''">
-                        AND projectRole = #{projectRole}
-                </if>
                 <if test="isDone != null and isDone != ''">
                         AND isDone = #{isDone}
                 </if>
@@ -47,8 +44,8 @@
         </select>
 
         <insert id="newProject" parameterType="TbProjectVo">
-                INSERT INTO TB_MINA_PROJECT_L (teamId, projectName, description, teamName, projectRole, isDone, createdUserId, updatedUserId, createDttm, updatedDttm) 
-                VALUES (#{teamId}, #{projectName}, #{description}, #{teamName}, #{projectRole}, #{isDone}, #{createdUserId}, #{updatedUserId}, GETDATE(), GETDATE())
+                INSERT INTO TB_MINA_PROJECT_L (teamId, projectName, description, teamName, isDone, createdUserId, updatedUserId, createDttm, updatedDttm) 
+                VALUES (#{teamId}, #{projectName}, #{description}, #{teamName}, #{isDone}, #{createdUserId}, #{updatedUserId}, GETDATE(), GETDATE())
         </insert>
 
         <update id="putProject" parameterType="TbProjectVo">
@@ -65,9 +62,6 @@
                 </if>
                 <if test="teamName != null and teamName != ''">
                         teamName = #{teamName},
-                </if>
-                 <if test="projectRole != null and projectRole != ''">
-                        projectRole = #{projectRole},
                 </if>
                  <if test="isDone != null and isDone != ''">
                         isDone = #{isDone},

@@ -17,7 +17,6 @@ public class TbProjectVo {
     private String projectName;
     private String description;
     private String teamName;
-    private String projectRole;
     private boolean isDone;
     private String createdUserId;
     private String updatedUserId;
