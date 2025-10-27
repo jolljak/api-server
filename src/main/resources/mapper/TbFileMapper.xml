@@ -11,6 +11,9 @@
                 <if test="fileId != null and fileId != ''">
                         AND fileId = #{fileId}
                 </if>
+                <if test="filePath != null and filePath != ''">
+                        AND filePath = #{filePath}
+                </if>
                 <if test="fileSize != null and fileSize != ''">
                         AND fileSize = #{fileSize}
                 </if>
@@ -32,14 +35,17 @@
         </select>
 
         <insert id="newSFile" parameterType="TbFileVo">
-                INSERT INTO TB_MINA_FILE_L (fileSize, fileName, fileExt, createUserId, createDttm, updatedDttm) 
-                VALUES (#{fileSize}, #{fileName}, #{fileExt}, #{createUserId}, GETDATE(), GETDATE()) 
+                INSERT INTO TB_MINA_FILE_L (filePath, fileSize, fileName, fileExt, createUserId, createDttm, updatedDttm) 
+                VALUES (#{filePath}, #{fileSize}, #{fileName}, #{fileExt}, #{createUserId}, GETDATE(), GETDATE()) 
         </insert>
 
         <update id="putFile" parameterType="TbFileVo">
                 <if test="fileId != null and fileId != ''">
                         UPDATE TB_MINA_FILE_L 
-                        SET 
+                        SET
+                        <if test="filePath != null and filePath != ''">
+                                filePath = #{filePath},
+                        </if> 
                         <if test="fileSize != null and fileSize != ''">
                                 fileSize = #{fileSize},
                         </if>

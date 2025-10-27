@@ -12,7 +12,8 @@ import lombok.ToString;
 public class TbFileVo {
 
     private Integer fileId;
-    private String fileSize;
+    private String filePath;
+    private Integer fileSize;
     private String fileName;
     private String fileExt;
     private String createUserId;
