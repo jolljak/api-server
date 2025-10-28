@@ -3,8 +3,10 @@ package com.tuk.mina.api.ctl.record;
 
 import com.tuk.mina.api.svc.file.fileSvc;
 import com.tuk.mina.util.MultipartInputStreamFileResource;
+import com.tuk.mina.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -25,7 +27,10 @@ public class recordCtl {
     private static final Logger log = LoggerFactory.getLogger(recordCtl.class);
 
     @Value("${ai.server.url}")
-    private String aiServerUrl; // 예: http://localhost:8001
+    private String aiServerUrl;
+
+    @Autowired
+    private SecurityUtil securityUtil;
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final fileSvc fileSvc;
@@ -59,6 +64,7 @@ public class recordCtl {
         LinkedMultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
         body.add("file", new MultipartInputStreamFileResource(file.getInputStream(), file.getOriginalFilename()));
         body.add("language", language);
+        body.add("createUserId", securityUtil.getAuthUserId().get());
 
         HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
