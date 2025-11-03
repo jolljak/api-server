@@ -12,7 +12,7 @@ import lombok.ToString;
 @Alias("TbTeamUserMapVo")
 public class TbTeamUserMapVo {
 
-    private String teamId;
+    private Integer teamId;
     private String userId;
     private String memberRole;
     private String memberStatus;

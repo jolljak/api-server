@@ -10,12 +10,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tuk.mina.dao.team.TbTeamDao;
+import com.tuk.mina.dao.team.TbTeamUserMapDao;
 import com.tuk.mina.dao.user.TbUserDao;
 import com.tuk.mina.dto.jwt.TokenDto;
 import com.tuk.mina.dto.user.UserDto;
 import com.tuk.mina.dto.user.UserResponseDto;
 import com.tuk.mina.util.SecurityUtil;
 import com.tuk.mina.util.jwt.JwtTokenProvider;
+import com.tuk.mina.vo.team.TbTeamUserMapVo;
+import com.tuk.mina.vo.team.TbTeamVo;
 import com.tuk.mina.vo.user.TbUserVo;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -37,6 +41,12 @@ public class userSvc {
 
     @Autowired
     private SecurityUtil securityUtil;
+
+    @Autowired
+    private TbTeamUserMapDao teamUserMapDao;
+
+    @Autowired
+    private TbTeamDao teamDao;
 
     @Transactional
     public TokenDto login(UserDto loginInfo) {
@@ -82,7 +92,20 @@ public class userSvc {
         userRes.setUserBirth(currentUserVo.getUserBirth());
         userRes.setCreatedDttm(currentUserVo.getCreateDttm());
         userRes.setUpdatedDttm(currentUserVo.getUpdatedDttm());
+        userRes.setTeam(getUserTeamInfo(currentUserVo.getUserId()));
 
         return userRes;
+    }
+
+    public TbTeamVo getUserTeamInfo(String userId) {
+        TbTeamUserMapVo param = new TbTeamUserMapVo();
+        param.setUserId(userId);
+        List<TbTeamUserMapVo> teamUserMap = teamUserMapDao.getTeamUserMap(null);    
+
+        if (teamUserMap.isEmpty()) return null;
+        
+        TbTeamVo teamParam = new TbTeamVo();
+        teamParam.setTeamId(teamUserMap.get(0).getTeamId());
+        return teamDao.getTeam(teamParam).get(0);
     }
 }
