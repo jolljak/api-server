@@ -11,14 +11,13 @@ import lombok.ToString;
 @Alias("TbRecordVo")
 public class TbRecordVo {
 
-    private String recordId;
-    private String recordFileId;
-    private String projectId;
-    private String textFileId;
+    private int recordId;               //녹음 아이디
+    private int recordFileId;           //녹음 파일 아이디
+    private int projectId;              //프로젝트 아이디
+    private int textFileId;             //요약 파일 아이디
     private String recordlanguage;
     private String recordMemo;
     private String createUserId;
-    private String updatedUserId;
     private String createDttm;
     private String updatedDttm;
     
