@@ -52,5 +52,4 @@ public class userCtl {
         return ResponseEntity.ok(userSvc.getCurrentUser());
     }
     
-    
 }
