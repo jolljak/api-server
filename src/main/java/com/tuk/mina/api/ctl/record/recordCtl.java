@@ -1,7 +1,10 @@
 package com.tuk.mina.api.ctl.record;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tuk.mina.api.svc.file.fileSvc;
+import com.tuk.mina.api.svc.record.RecordSvc;
 import com.tuk.mina.util.MultipartInputStreamFileResource;
 import com.tuk.mina.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,10 +35,10 @@ public class recordCtl {
     @Autowired
     private SecurityUtil securityUtil;
 
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final fileSvc fileSvc;
+    @Autowired
+    private RecordSvc recordSvc;
 
-    public recordCtl(fileSvc fileSvc) { this.fileSvc = fileSvc; }
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @PostMapping("/transcribe-diarize")
     @Operation(
@@ -48,7 +51,9 @@ public class recordCtl {
     )
     public ResponseEntity<String> transcribeAndDiarize(
             @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "language", defaultValue = "auto") String language
+            @RequestParam(value = "language", defaultValue = "auto") String language,
+            @RequestParam(value = "memo", defaultValue = "") String memo,
+            @RequestParam(value = "projectId") int projectId
     ) throws IOException {
 
         // S3 업로드
@@ -72,6 +77,13 @@ public class recordCtl {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
             log.info("FastAPI 분석 완료, 상태코드: {}", response.getStatusCode());
             log.info("FastAPI 응답 본문: {}", response.getBody());
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonNode = mapper.readTree(response.getBody());
+            String fulltext = jsonNode.path("fulltext").asText(null);
+            int fileId = jsonNode.path("fileId").asInt(0);
+            recordSvc.saveRecordResult(fileId, language, memo, projectId, fulltext, securityUtil.getAuthUserId().get());
+
             return ResponseEntity
                     .status(response.getStatusCode())
                     .contentType(MediaType.APPLICATION_JSON)
