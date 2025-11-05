@@ -51,6 +51,7 @@ public class projectCtl {
         projectDao.newProject(param);
         return ResponseEntity.ok("프로젝트가 등록되었습니다.");
     }
+    
 
     @PutMapping
     @Operation(summary = "Update Project", description = "프로젝트 수정 API")
