@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuk.mina.dao.project.TbProjServiceInfoDao">
+
+    <select id="getProjServiceInfo" resultType="TbProjServiceInfoVo">
+        SELECT 
+            *
+        FROM TB_MINA_PROJ_SERVICE_INFO
+        WHERE 1=1
+        <if test="serviceId != null">
+            AND serviceId = #{serviceId}
+        </if>
+        <if test="projectId != null">
+            AND projectId = #{projectId}
+        </if>
+        <if test="serviceField != null and serviceField != ''">
+            AND serviceField = #{serviceField}
+        </if>
+    </select>
+
+    <insert id="newProjServiceInfo" parameterType="TbProjServiceInfoVo">
+        INSERT INTO TB_MINA_PROJ_SERVICE_INFO (
+            projectId,
+            serviceField,
+            fieldValue,
+            createdUserId,
+            createdDttm,
+            updatedDttm
+        ) VALUES (
+            #{projectId},
+            #{serviceField},
+            #{fieldValue},
+            #{createdUserId},
+            GETDATE(),
+            GETDATE()
+        )
+    </insert>
+
+    <update id="putProjServiceInfo" parameterType="TbProjServiceInfoVo">
+        UPDATE TB_MINA_PROJ_SERVICE_INFO
+        SET
+            <if test="serviceField != null and serviceField != ''">
+                serviceField = #{serviceField},
+            </if>
+            <if test="fieldValue != null and fieldValue != ''">
+                fieldValue = #{fieldValue},
+            </if>
+            updatedDttm = GETDATE()
+        WHERE serviceId = #{serviceId}
+    </update>
+
+    <delete id="delProjServiceInfo">
+        <if test="serviceId != null and serviceId != ''">
+                DELETE FROM TB_MINA_PROJ_SERVICE_INFO
+                WHERE serviceId = #{serviceId}
+        </if>
+    </delete>
+
+</mapper>
