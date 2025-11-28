@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuk.mina.dao.note.TbNoteDao">
+
+    <select id="getNote" resultType="TbNoteVo">
+        SELECT 
+            noteId,
+            recordId,
+            noteSummary,
+            noteFullText,
+            createdUserId,
+            createdDttm,
+            updatedDttm
+        FROM TB_MINA_NOTE_L
+        WHERE 1=1
+        <if test="noteId != 0">
+            AND noteId = #{noteId}
+        </if>
+        <if test="recordId != 0">
+            AND recordId = #{recordId}
+        </if>
+    </select>
+
+    <insert id="newNote" parameterType="TbNoteVo">
+        INSERT INTO TB_MINA_NOTE_L (
+            recordId,
+            noteSummary,
+            noteFullText,
+            createdUserId,
+            createdDttm,
+            updatedDttm
+        ) VALUES (
+            #{recordId},
+            #{noteSummary},
+            #{noteFullText},
+            #{createdUserId},
+            GETDATE(),
+            GETDATE()
+        )
+    </insert>
+
+    <update id="putNote" parameterType="TbNoteVo">
+        UPDATE TB_MINA_NOTE_L
+        SET
+            <if test="noteSummary != null and noteSummary != ''">
+                noteSummary = #{noteSummary},
+            </if>
+            <if test="noteFullText != null and noteFullText != ''">
+                noteFullText = #{noteFullText},
+            </if>
+            updatedDttm = GETDATE()
+        WHERE noteId = #{noteId}
+    </update>
+
+    <delete id="delNote">
+        DELETE FROM TB_MINA_NOTE_L
+        WHERE noteId = #{noteId}
+    </delete>
+
+</mapper>
