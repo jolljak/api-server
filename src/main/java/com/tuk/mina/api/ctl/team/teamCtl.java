@@ -79,5 +79,14 @@ public class teamCtl {
         teamSvc.newTeamUserMap(param);
         return ResponseEntity.ok("팀 멤버가 추가되었습니다.");
     }
+
+    @GetMapping("/member")
+    @Operation(summary = "Get Team Members", description = "팀 멤버 조회 API (team user mapping 조회)")
+    public ResponseEntity<List<TbTeamUserMapVo>> getTeamMembers(TbTeamUserMapVo param) {
+        // 예: /api/team/member?teamId=1  이런 식으로 요청하면
+        // teamId가 TbTeamUserMapVo의 필드에 바인딩됨
+        List<TbTeamUserMapVo> members = teamSvc.getTeamUserMap(param);
+        return ResponseEntity.ok(members);
+    }
     
 }

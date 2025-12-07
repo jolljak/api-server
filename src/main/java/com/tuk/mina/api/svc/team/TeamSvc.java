@@ -28,4 +28,7 @@ public class TeamSvc {
         }
     }
 
+    public List<TbTeamUserMapVo> getTeamUserMap(TbTeamUserMapVo param) {
+        return teamUserMapDao.getTeamUserMap(param);
+    }
 }
