@@ -12,7 +12,6 @@ import lombok.ToString;
 public class TbNoteVo {
 
     private int noteId;
-    private int recordId;
     private String noteSummary;
     private String noteFullText;
     private String createdUserId;

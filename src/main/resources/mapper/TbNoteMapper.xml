@@ -7,7 +7,6 @@
     <select id="getNote" resultType="TbNoteVo">
         SELECT 
             noteId,
-            recordId,
             noteSummary,
             noteFullText,
             createdUserId,
@@ -18,21 +17,16 @@
         <if test="noteId != 0">
             AND noteId = #{noteId}
         </if>
-        <if test="recordId != 0">
-            AND recordId = #{recordId}
-        </if>
     </select>
 
     <insert id="newNote" parameterType="TbNoteVo">
         INSERT INTO TB_MINA_NOTE_L (
-            recordId,
             noteSummary,
             noteFullText,
             createdUserId,
             createdDttm,
             updatedDttm
         ) VALUES (
-            #{recordId},
             #{noteSummary},
             #{noteFullText},
             #{createdUserId},

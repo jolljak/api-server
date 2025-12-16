@@ -15,11 +15,11 @@ public class RecordSvc {
     private TbRecordDao tbRecordDao;
 
     @Transactional
-    public void saveRecordResult(int fileId, String language, String memo, int projectId, String fulltext, String createUserId) {
+    public void saveRecordResult(int fileId, String language, String memo, int projectId, String createUserId) {
         TbRecordVo vo = new TbRecordVo();
         vo.setRecordFileId(fileId);
         vo.setRecordlanguage(language);
-        vo.setRecordMemo(fulltext != null ? fulltext : memo);
+        vo.setRecordMemo(memo);
         vo.setProjectId(projectId);
         vo.setCreateUserId(createUserId);
 

@@ -4,9 +4,13 @@ package com.tuk.mina.api.ctl.record;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tuk.mina.api.svc.file.fileSvc;
+import com.tuk.mina.api.svc.note.NoteSvc;
 import com.tuk.mina.api.svc.record.RecordSvc;
+import com.tuk.mina.dao.task.TbTaskDao;
 import com.tuk.mina.util.MultipartInputStreamFileResource;
 import com.tuk.mina.util.SecurityUtil;
+import com.tuk.mina.vo.record.TbNoteVo;
+import com.tuk.mina.vo.task.TbTaskVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +41,12 @@ public class recordCtl {
 
     @Autowired
     private RecordSvc recordSvc;
+
+    @Autowired
+    private NoteSvc noteSvc;
+
+    @Autowired
+    private TbTaskDao tbTaskDao;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -80,9 +90,42 @@ public class recordCtl {
 
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(response.getBody());
-            String fulltext = jsonNode.path("fulltext").asText(null);
+            String fulltext = jsonNode.path("full_text").asText(null);
+            String summary = jsonNode.path("summary").asText(null);
+            TbNoteVo tbNoteVo = new TbNoteVo();
+            tbNoteVo.setNoteFullText(fulltext);
+            tbNoteVo.setNoteSummary(summary);
+            noteSvc.newNote(tbNoteVo);
+
+            JsonNode tasksNode = jsonNode.path("tasks");
+
+            if (tasksNode != null && tasksNode.isArray()) {
+                for (JsonNode speakerNode : tasksNode) {
+                    String speaker = speakerNode.path("speaker").asText("");
+                    if (speaker == null || speaker.isBlank()) continue;
+
+                    JsonNode itemsNode = speakerNode.path("items");
+                    if (itemsNode == null || !itemsNode.isArray()) continue;
+
+                    for (JsonNode itemNode : itemsNode) {
+                        String taskContent = itemNode.path("업무설명").asText("");
+                        if (taskContent == null || taskContent.isBlank()) continue;
+
+                        TbTaskVo tbTaskVo = new TbTaskVo();
+                        tbTaskVo.setProjectId(projectId);
+                        tbTaskVo.setTaskStatusId("NEW");
+                        tbTaskVo.setDone(false);
+                        tbTaskVo.setUserId(speaker);
+                        tbTaskVo.setTaskContent(taskContent);
+                        tbTaskVo.setCreateUserId(securityUtil.getAuthUserId().get());
+
+                        tbTaskDao.newTask(tbTaskVo); // 업무 1개당 insert
+                    }
+                }
+            }
+
             int fileId = jsonNode.path("fileId").asInt(0);
-            recordSvc.saveRecordResult(fileId, language, memo, projectId, fulltext, securityUtil.getAuthUserId().get());
+            recordSvc.saveRecordResult(fileId, language, memo, projectId, securityUtil.getAuthUserId().get());
 
             return ResponseEntity
                     .status(response.getStatusCode())
