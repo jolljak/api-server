@@ -22,9 +22,10 @@ public class NoteSvc {
         return noteDao.getNote(param);
     }
 
-    public void newNote(TbNoteVo param) {
+    public int newNote(TbNoteVo param) {
         param.setCreatedUserId(securityUtil.getAuthUserId().get());
         noteDao.newNote(param);
+        return param.getNoteId();
     }
 
     public void putNote(TbNoteVo param) {

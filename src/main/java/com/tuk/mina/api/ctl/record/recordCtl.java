@@ -95,7 +95,7 @@ public class recordCtl {
             TbNoteVo tbNoteVo = new TbNoteVo();
             tbNoteVo.setNoteFullText(fulltext);
             tbNoteVo.setNoteSummary(summary);
-            noteSvc.newNote(tbNoteVo);
+            int noteId = noteSvc.newNote(tbNoteVo);
 
             JsonNode tasksNode = jsonNode.path("tasks");
 
@@ -125,7 +125,7 @@ public class recordCtl {
             }
 
             int fileId = jsonNode.path("fileId").asInt(0);
-            recordSvc.saveRecordResult(fileId, language, memo, projectId, securityUtil.getAuthUserId().get());
+            recordSvc.saveRecordResult(fileId, language, memo, projectId, noteId, securityUtil.getAuthUserId().get());
 
             return ResponseEntity
                     .status(response.getStatusCode())

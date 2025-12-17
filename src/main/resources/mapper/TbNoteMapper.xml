@@ -20,19 +20,12 @@
     </select>
 
     <insert id="newNote" parameterType="TbNoteVo">
-        INSERT INTO TB_MINA_NOTE_L (
-            noteSummary,
-            noteFullText,
-            createdUserId,
-            createdDttm,
-            updatedDttm
-        ) VALUES (
-            #{noteSummary},
-            #{noteFullText},
-            #{createdUserId},
-            GETDATE(),
-            GETDATE()
-        )
+        INSERT INTO TB_NOTE (recordId, noteContent, createdUserId, createDttm)
+        VALUES (#{recordId}, #{noteContent}, #{createdUserId}, GETDATE());
+
+        <selectKey keyProperty="noteId" resultType="int" order="AFTER">
+            SELECT CAST(SCOPE_IDENTITY() AS INT)
+        </selectKey>
     </insert>
 
     <update id="putNote" parameterType="TbNoteVo">

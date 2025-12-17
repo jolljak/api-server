@@ -15,12 +15,13 @@ public class RecordSvc {
     private TbRecordDao tbRecordDao;
 
     @Transactional
-    public void saveRecordResult(int fileId, String language, String memo, int projectId, String createUserId) {
+    public void saveRecordResult(int fileId, String language, String memo, int projectId, int textFileId ,String createUserId) {
         TbRecordVo vo = new TbRecordVo();
         vo.setRecordFileId(fileId);
         vo.setRecordlanguage(language);
         vo.setRecordMemo(memo);
         vo.setProjectId(projectId);
+        vo.setTextFileId(textFileId);
         vo.setCreateUserId(createUserId);
 
         tbRecordDao.insertRecord(vo);
