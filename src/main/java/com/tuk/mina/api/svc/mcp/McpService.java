@@ -1,87 +1,65 @@
 package com.tuk.mina.api.svc.mcp;
 
 import com.tuk.mina.dto.mcp.McpDto;
-import lombok.RequiredArgsConstructor;
+import com.tuk.mina.api.svc.project.ProjServiceInfoSvc;
+import com.tuk.mina.vo.project.TbProjServiceInfoVo;
+import com.tuk.mina.dao.task.TbTaskDao;
+import com.tuk.mina.dao.project.TbProjectDao;
+import com.tuk.mina.dao.team.TbTeamUserMapDao;
+import com.tuk.mina.vo.task.TbTaskVo;
+import com.tuk.mina.vo.project.TbProjectVo;
+import com.tuk.mina.vo.team.TbTeamUserMapVo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class McpService {
 
-    private final RestTemplate restTemplate;
+    @Autowired
+    private RestTemplate restTemplate;
 
-    // application.properties에 ai.server.url=http://localhost:8000 설정 필요
+    @Autowired
+    private ProjServiceInfoSvc projServiceInfoSvc;
+
+    @Autowired
+    private TbTaskDao taskDao;
+
+    @Autowired
+    private TbProjectDao projectDao;
+
+    @Autowired
+    private TbTeamUserMapDao teamUserMapDao;
+
     @Value("${ai.server.url}")
     private String aiServerUrl;
 
-    // [Mock DB] 프로젝트별 연결 정보 저장소
-    // Key: ProjectId, Value: List of Configs
-    private static final Map<Integer, List<Map<String, Object>>> mockDb = new ConcurrentHashMap<>();
-
     // --- 1. Proxy Methods (To Python AI Server) ---
 
-    // 서비스 목록 조회
     public Object getAvailableServices() {
         String url = aiServerUrl + "/services/list";
         log.info("Proxying GET to: {}", url);
         return restTemplate.getForObject(url, Object.class);
     }
 
-    // AI 가이드 요청
     public Object getServiceGuide(McpDto.GuideRequest request) {
         String url = aiServerUrl + "/services/guide";
         log.info("Proxying POST to: {}", url);
         return restTemplate.postForObject(url, request, Object.class);
     }
 
-    // 서비스 등록
     public Object registerService(Map<String, Object> serviceData) {
         String url = aiServerUrl + "/services/register";
         log.info("Proxying POST to: {}", url);
         return restTemplate.postForObject(url, serviceData, Object.class);
-    }
-
-    // --- 2. Mock DB Methods (Local Storage) ---
-
-    // 프로젝트에 서비스 연결 (설정값 저장)
-    public void linkServiceToProject(int projectId, McpDto.LinkRequest request) {
-        log.info("Linking Service to Project [Mock DB]");
-        log.info("Project: {}, Service: {}, Config: {}", projectId, request.getServiceId(), request.getConfig());
-
-        mockDb.computeIfAbsent(projectId, k -> new ArrayList<>());
-        List<Map<String, Object>> links = mockDb.get(projectId);
-
-        // 중복 제거 (기존 연결 있으면 삭제 후 갱신)
-        links.removeIf(link -> {
-            Integer sid = (Integer) link.get("serviceId");
-            return sid != null && sid.equals(request.getServiceId());
-        });
-
-        // 저장
-        Map<String, Object> newLink = new HashMap<>();
-        newLink.put("serviceId", request.getServiceId());
-        newLink.put("config", request.getConfig());
-        newLink.put("linkedAt", new Date());
-
-        links.add(newLink);
-    }
-
-    // 연결 해제
-    public void unlinkServiceFromProject(int projectId, int serviceId) {
-        if (mockDb.containsKey(projectId)) {
-            mockDb.get(projectId).removeIf(link -> {
-                Integer sid = (Integer) link.get("serviceId");
-                return sid != null && sid.equals(serviceId);
-            });
-            log.info("Unlinked Service {} from Project {}", serviceId, projectId);
-        }
     }
 
     public Object registerPreset(Map<String, Object> payload) {
@@ -94,5 +72,148 @@ public class McpService {
         String url = aiServerUrl + "/execute-actions";
         log.info("Proxying POST (Execute) to: {}", url);
         return restTemplate.postForObject(url, payload, Object.class);
+    }
+
+    public Object getGoogleCalendarEvents() {
+        String url = aiServerUrl + "/services/google-calendar/events";
+        log.info("Proxying GET (Calendar) to: {}", url);
+        return restTemplate.getForObject(url, Object.class);
+    }
+
+    // --- 2. 실제 DB 연동 Methods ---
+
+    public void linkServiceToProject(int projectId, McpDto.LinkRequest request) {
+        log.info("Linking Service to Project [DB]");
+        log.info("Project: {}, Service: {}, Config: {}", projectId, request.getServiceId(), request.getConfig());
+
+        List<TbProjServiceInfoVo> configList = new ArrayList<>();
+        for (Map.Entry<String, Object> entry : request.getConfig().entrySet()) {
+            TbProjServiceInfoVo vo = new TbProjServiceInfoVo();
+            vo.setProjectId(projectId);
+            vo.setServiceField(entry.getKey());
+            vo.setFieldValue(String.valueOf(entry.getValue()));
+            configList.add(vo);
+        }
+        projServiceInfoSvc.newProjServiceInfo(configList);
+    }
+
+    public void unlinkServiceFromProject(int projectId, int serviceId) {
+        TbProjServiceInfoVo param = new TbProjServiceInfoVo();
+        param.setProjectId(projectId);
+        param.setServiceId(serviceId);
+        projServiceInfoSvc.delProjServiceInfo(param);
+        log.info("Unlinked Service {} from Project {}", serviceId, projectId);
+    }
+
+    public List<TbProjServiceInfoVo> getProjectServiceConfig(int projectId) {
+        TbProjServiceInfoVo param = new TbProjServiceInfoVo();
+        param.setProjectId(projectId);
+        return projServiceInfoSvc.getProjServiceInfo(param);
+    }
+
+    // --- 3. 대시보드 API Methods ---
+
+    // 📅 주간 캘린더 (TbTaskVo에 taskDueDate가 없어 전체 업무 반환)
+    public Map<String, Object> getWeeklyCalendar(String userId, String startDate) {
+        LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.now().with(DayOfWeek.MONDAY);
+        LocalDate end = start.plusDays(6);
+
+        TbTaskVo param = new TbTaskVo();
+        param.setUserId(userId);
+        List<TbTaskVo> allTasks = taskDao.getTask(param);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("startDate", start.toString());
+        result.put("endDate", end.toString());
+        result.put("tasks", allTasks);
+        return result;
+    }
+
+    // 🔔 오늘 마감 업무 (현재 TbTaskVo에 taskDueDate가 없어 전체 업무 반환)
+    public List<TbTaskVo> getTodayDueTasks(String userId) {
+        TbTaskVo param = new TbTaskVo();
+        param.setUserId(userId);
+        return taskDao.getTask(param);
+    }
+
+    // 👨‍💼 팀장 대시보드
+    public Map<String, Object> getLeaderDashboard(int teamId) {
+        TbTeamUserMapVo teamParam = new TbTeamUserMapVo();
+        teamParam.setTeamId(teamId);
+        List<TbTeamUserMapVo> members = teamUserMapDao.getTeamUserMap(teamParam);
+
+        List<TbProjectVo> projects = projectDao.getProject(null);
+
+        int totalTasks = 0, completedTasks = 0, delayedTasks = 0;
+        for (TbTeamUserMapVo m : members) {
+            TbTaskVo taskParam = new TbTaskVo();
+            taskParam.setUserId(m.getUserId());
+            List<TbTaskVo> tasks = taskDao.getTask(taskParam);
+            totalTasks += tasks.size();
+            completedTasks += (int) tasks.stream().filter(t -> "DONE".equals(t.getTaskStatusId())).count();
+            delayedTasks += (int) tasks.stream().filter(t -> "DELAYED".equals(t.getTaskStatusId())).count();
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("teamMembers", members.size());
+        result.put("totalProjects", projects.size());
+        result.put("totalTasks", totalTasks);
+        result.put("completedTasks", completedTasks);
+        result.put("delayedTasks", delayedTasks);
+        result.put("avgCompletion", totalTasks > 0 ? (completedTasks * 100 / totalTasks) : 0);
+        return result;
+    }
+
+    // 📊 팀원 업무 부하
+    public List<Map<String, Object>> getTeamWorkload(int teamId) {
+        TbTeamUserMapVo teamParam = new TbTeamUserMapVo();
+        teamParam.setTeamId(teamId);
+        List<TbTeamUserMapVo> members = teamUserMapDao.getTeamUserMap(teamParam);
+
+        return members.stream().map(m -> {
+            TbTaskVo taskParam = new TbTaskVo();
+            taskParam.setUserId(m.getUserId());
+            List<TbTaskVo> tasks = taskDao.getTask(taskParam);
+
+            long todo = tasks.stream().filter(t -> "TODO".equals(t.getTaskStatusId())).count();
+            long inProgress = tasks.stream().filter(t -> "IN_PROGRESS".equals(t.getTaskStatusId())).count();
+            long done = tasks.stream().filter(t -> "DONE".equals(t.getTaskStatusId())).count();
+
+            Map<String, Object> workload = new HashMap<>();
+            workload.put("userId", m.getUserId());
+            workload.put("role", m.getMemberRole() != null ? m.getMemberRole() : "팀원");
+            workload.put("totalTasks", tasks.size());
+            workload.put("todo", todo);
+            workload.put("inProgress", inProgress);
+            workload.put("done", done);
+            return workload;
+        }).collect(Collectors.toList());
+    }
+
+    // 📈 프로젝트 진행률
+    public List<Map<String, Object>> getProjectProgress(Integer projectId) {
+        TbProjectVo param = null;
+        if (projectId != null) {
+            param = new TbProjectVo();
+            param.setProjectId(projectId);
+        }
+        List<TbProjectVo> projects = projectDao.getProject(param);
+
+        return projects.stream().map(p -> {
+            TbTaskVo taskParam = new TbTaskVo();
+            taskParam.setProjectId(p.getProjectId());
+            List<TbTaskVo> tasks = taskDao.getTask(taskParam);
+
+            long done = tasks.stream().filter(t -> "DONE".equals(t.getTaskStatusId())).count();
+            int progress = tasks.size() > 0 ? (int)(done * 100 / tasks.size()) : 0;
+
+            Map<String, Object> progressMap = new HashMap<>();
+            progressMap.put("projectId", p.getProjectId());
+            progressMap.put("projectName", p.getProjectName());
+            progressMap.put("totalTasks", tasks.size());
+            progressMap.put("completedTasks", done);
+            progressMap.put("progress", progress);
+            return progressMap;
+        }).collect(Collectors.toList());
     }
 }

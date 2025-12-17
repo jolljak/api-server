@@ -49,6 +49,7 @@
             </if>
             updatedDttm = GETDATE()
         WHERE serviceId = #{serviceId}
+          AND projectId = #{projectId}
     </update>
 
     <delete id="delProjServiceInfo">

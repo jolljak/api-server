@@ -33,11 +33,13 @@ public class SecurityConfig {
                     "/v3/api-docs/**",
                     "swagger-resources/**", 
                     "/api/user/login", 
-                    "/api/user/signup").permitAll() // 로그인 및 회원가입은 모두 허용
+                    "/api/user/signup",
+                    "/api/mcp/dashboard/**"    // 대시보드 API 허용
+                ).permitAll()
                 .requestMatchers(
-                    HttpMethod.OPTIONS, // OPTIONS (서버에게 해당 URL에서 어떤 메서드가 허용되는지 묻는 요청)
-                    "/**").permitAll()  // CORS Preflight 요청 허용
-                .anyRequest().authenticated()) // 모든 요청 인증 요구
+                    HttpMethod.OPTIONS,
+                    "/**").permitAll()
+                .anyRequest().authenticated())
             .formLogin(form -> form.disable()) // 기본 로그인 화면 비활성화
             .httpBasic(httpBasic -> httpBasic.disable()) // HTTP 기본 인증 비활성화
             // 직접 만든 JWT 필터를 UsernamePasswordAuthenticationFilter 앞에 추가
