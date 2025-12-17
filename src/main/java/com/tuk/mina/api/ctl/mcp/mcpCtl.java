@@ -43,7 +43,7 @@ public class mcpCtl {
     @Operation(summary = "서비스 등록", description = "새로운 서비스를 파이썬 AI 서버에 등록합니다.")
     public ResponseEntity<?> registerService(@RequestBody Map<String, Object> serviceData) {
         return ResponseEntity.ok(mcpService.registerService(serviceData));
-    }
+    } 
 
     @PostMapping("/register-preset")
     @Operation(summary = "간편 서비스 등록", description = "사전 정의된 템플릿(Notion, GitHub 등)을 사용하여 서비스를 등록합니다.")
