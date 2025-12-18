@@ -11,7 +11,7 @@ import lombok.ToString;
 @Alias("TbNoteVo")
 public class TbNoteVo {
 
-    private int noteId;
+    private Integer  noteId;
     private String noteSummary;
     private String noteFullText;
     private String createdUserId;

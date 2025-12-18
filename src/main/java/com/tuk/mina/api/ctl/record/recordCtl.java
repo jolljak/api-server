@@ -95,7 +95,7 @@ public class recordCtl {
             TbNoteVo tbNoteVo = new TbNoteVo();
             tbNoteVo.setNoteFullText(fulltext);
             tbNoteVo.setNoteSummary(summary);
-            int noteId = noteSvc.newNote(tbNoteVo);
+            Integer noteId = noteSvc.newNote(tbNoteVo);
 
             JsonNode tasksNode = jsonNode.path("tasks");
 
