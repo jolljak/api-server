@@ -53,7 +53,7 @@ public class mcpCtl {
 
     @PostMapping("/execute-actions")
     @Operation(summary = "도구 실행", description = "AI 에이전트를 통해 실제 도구(Notion 저장, Jira 생성 등)를 실행합니다.")
-    public ResponseEntity<?> executeActions(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> executeActions(@RequestBody McpDto.ExecuteRequest payload) {
         return ResponseEntity.ok(mcpService.executeActions(payload));
     }
 
@@ -125,5 +125,15 @@ public class mcpCtl {
     @Operation(summary = "구글 캘린더", description = "최근 구글 캘린더 일정 5개를 조회합니다.")
     public ResponseEntity<?> getGoogleCalendarEvents() {
         return ResponseEntity.ok(mcpService.getGoogleCalendarEvents());
+    }
+    
+    @PostMapping("/init-services")
+    @Operation(summary = "기본 서비스 초기화", description = "Notion, GitHub, Jira, Google Calendar 기본 서비스를 DB에 등록합니다.")
+    public ResponseEntity<?> initDefaultServices() {
+        mcpService.initDefaultServices();
+        return ResponseEntity.ok(Map.of(
+            "status", "success",
+            "message", "Default services initialized"
+        ));
     }
 }

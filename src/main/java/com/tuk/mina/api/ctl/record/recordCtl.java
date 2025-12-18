@@ -90,8 +90,18 @@ public class recordCtl {
 
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(response.getBody());
-            String fulltext = jsonNode.path("full_text").asText(null);
-            String summary = jsonNode.path("summary").asText(null);
+
+            // 1. 결과 코드 확인 (0이면 분석 실패)
+            int resultCode = jsonNode.path("resultCode").asInt(0);
+            if (resultCode != 1) {
+                String errorMsg = jsonNode.path("message").asText("알 수 없는 분석 오류");
+                log.error("FastAPI 분석 프로세스 실패: {}", errorMsg);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("{\"resultCode\":0,\"message\":\"AI 분석 실패: " + errorMsg + "\"}");
+            }
+
+            String fulltext = jsonNode.path("full_text").asText("");
+            String summary = jsonNode.path("summary").asText("");
             TbNoteVo tbNoteVo = new TbNoteVo();
             tbNoteVo.setNoteFullText(fulltext);
             tbNoteVo.setNoteSummary(summary);

@@ -20,8 +20,24 @@
         </if>
     </select>
 
+    <select id="getServiceMasterList" resultType="TbProjServiceInfoVo">
+        SELECT 
+            serviceId,
+            projectId,
+            serviceField,
+            fieldValue,
+            createdUserId,
+            createdDttm,
+            updatedDttm
+        FROM TB_MINA_PROJ_SERVICE_INFO
+        WHERE projectId = 0
+          AND serviceField = 'service_master'
+        ORDER BY serviceId
+    </select>
+
     <insert id="newProjServiceInfo" parameterType="TbProjServiceInfoVo">
         INSERT INTO TB_MINA_PROJ_SERVICE_INFO (
+            serviceId,
             projectId,
             serviceField,
             fieldValue,
@@ -29,6 +45,7 @@
             createdDttm,
             updatedDttm
         ) VALUES (
+            #{serviceId},
             #{projectId},
             #{serviceField},
             #{fieldValue},
@@ -41,22 +58,22 @@
     <update id="putProjServiceInfo" parameterType="TbProjServiceInfoVo">
         UPDATE TB_MINA_PROJ_SERVICE_INFO
         SET
-            <if test="serviceField != null and serviceField != ''">
-                serviceField = #{serviceField},
-            </if>
-            <if test="fieldValue != null and fieldValue != ''">
+            <if test="fieldValue != null">
                 fieldValue = #{fieldValue},
             </if>
             updatedDttm = GETDATE()
         WHERE serviceId = #{serviceId}
           AND projectId = #{projectId}
+          AND serviceField = #{serviceField}
     </update>
 
-    <delete id="delProjServiceInfo">
-        <if test="serviceId != null and serviceId != ''">
-                DELETE FROM TB_MINA_PROJ_SERVICE_INFO
-                WHERE serviceId = #{serviceId}
-        </if>
+    <delete id="delProjServiceInfo" parameterType="TbProjServiceInfoVo">
+        DELETE FROM TB_MINA_PROJ_SERVICE_INFO
+        WHERE serviceId = #{serviceId}
+          AND projectId = #{projectId}
+          <if test="serviceField != null and serviceField != ''">
+              AND serviceField = #{serviceField}
+          </if>
     </delete>
 
 </mapper>

@@ -23,8 +23,9 @@ public class ProjServiceInfoSvc {
     }
 
     public void newProjServiceInfo(List<TbProjServiceInfoVo> param) {
+        String userId = securityUtil.getAuthUserId().orElse("SYSTEM");
         for (TbProjServiceInfoVo vo : param) {
-            vo.setCreatedUserId(securityUtil.getAuthUserId().get());
+            vo.setCreatedUserId(userId);
             projServiceInfoDao.newProjServiceInfo(vo);
         }
     }
@@ -35,5 +36,9 @@ public class ProjServiceInfoSvc {
 
     public void delProjServiceInfo(TbProjServiceInfoVo param) {
         projServiceInfoDao.delProjServiceInfo(param);
+    }
+    
+    public List<TbProjServiceInfoVo> getServiceMasterList() {
+        return projServiceInfoDao.getServiceMasterList();
     }
 }
