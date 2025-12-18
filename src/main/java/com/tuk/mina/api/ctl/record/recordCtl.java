@@ -113,7 +113,7 @@ public class recordCtl {
 
                         TbTaskVo tbTaskVo = new TbTaskVo();
                         tbTaskVo.setProjectId(projectId);
-                        tbTaskVo.setTaskStatusId("NEW");
+                        tbTaskVo.setTaskStatusId("TODO");
                         tbTaskVo.setDone(false);
                         tbTaskVo.setUserId(speaker);
                         tbTaskVo.setTaskContent(taskContent);
