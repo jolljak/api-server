@@ -28,6 +28,11 @@ graph TB
     B --> H
     B --> G
     C --> D
+    C --> E
+    C --> F
+    C -->|MCP| I
+
+```
 
 
 ## Backend API Server (Spring Boot)
@@ -69,10 +74,3 @@ com.tuk.mina
 ### 지원 데이터베이스
 
 - **MSSQL**
-
-
-    C --> E
-    C --> F
-    C -->|MCP| I
-
-```
