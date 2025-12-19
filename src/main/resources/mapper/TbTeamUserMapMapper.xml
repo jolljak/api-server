@@ -9,7 +9,7 @@
                         m.*,
                         u.userName,
                         u.email
-                FROM TB_MINA_TEAM_USER_L m
+                FROM TB_MINA_TEAM_USER_M m
                 LEFT JOIN TB_MINA_USER_L u ON m.userId = u.userId
                 WHERE 1=1
                 <if test="teamId != null and teamId != ''">
@@ -36,12 +36,12 @@
         </select>
 
         <insert id="newTeamUserMap" parameterType="TbTeamUserMapVo">
-                INSERT INTO TB_MINA_TEAM_USER_L (teamId, userId, memberRole, memberStatus, memberNick, createDttm, updatedDttm)
+                INSERT INTO TB_MINA_TEAM_USER_M (teamId, userId, memberRole, memberStatus, memberNick, createDttm, updatedDttm)
                 VALUES (#{teamId}, #{userId}, #{memberRole}, #{memberStatus}, #{memberNick}, GETDATE(), GETDATE())
         </insert>
 
         <update id="putTeamUserMap" parameterType="TbTeamUserMapVo">
-                UPDATE TB_MINA_TEAM_USER_L
+                UPDATE TB_MINA_TEAM_USER_M
                 SET
                         <if test="memberRole != null and memberRole != ''">
                                 memberRole = #{memberRole},
@@ -57,7 +57,7 @@
         </update>
 
         <delete id="delTeamUserMap" parameterType="TbTeamUserMapVo">
-                DELETE FROM TB_MINA_TEAM_USER_L
+                DELETE FROM TB_MINA_TEAM_USER_M
                 WHERE 1=1
                 <if test="teamId != null and teamId != ''">
                         AND teamId = #{teamId}
