@@ -5,17 +5,14 @@
 <mapper namespace="com.tuk.mina.dao.note.TbNoteDao">
 
     <select id="getNote" resultType="TbNoteVo">
-        SELECT 
-            noteId,
-            noteSummary,
-            noteFullText,
-            createdUserId,
-            createdDttm,
-            updatedDttm
+        SELECT *
         FROM TB_MINA_NOTE_L
         WHERE 1=1
-        <if test="noteId != 0">
+        <if test="noteId != null">
             AND noteId = #{noteId}
+        </if>
+        <if test="createdUserId != null and createdUserId != ''">
+            AND createdUserId = #{createdUserId}
         </if>
     </select>
 

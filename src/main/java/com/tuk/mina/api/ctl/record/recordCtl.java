@@ -106,6 +106,7 @@ public class recordCtl {
             tbNoteVo.setNoteFullText(fulltext);
             tbNoteVo.setNoteSummary(summary);
             Integer noteId = noteSvc.newNote(tbNoteVo);
+            System.out.println("DEBUG: Created new note with ID: " + noteId + " for summary: " + summary);
 
             JsonNode tasksNode = jsonNode.path("tasks");
 

@@ -19,5 +19,5 @@ public class UserResponseDto {
     private String createdDttm;
     private String updatedDttm;
     
-    private TbTeamVo team;
+    private java.util.List<TbTeamVo> teams;
 }

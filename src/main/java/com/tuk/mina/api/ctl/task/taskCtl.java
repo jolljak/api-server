@@ -46,7 +46,10 @@ public class taskCtl {
     @PostMapping
     @Operation(summary = "Create New Task", description = "새로운 업무 등록 API")
     public ResponseEntity<String> newTask(@RequestBody TbTaskVo param) {
-        param.setCreateUserId(securityUtil.getAuthUserId().get());
+        java.util.Optional<String> userIdOpt = SecurityUtil.getAuthUserId();
+        if (userIdOpt.isPresent()) {
+            param.setCreateUserId(userIdOpt.get());
+        }
         taskDao.newTask(param);
         return ResponseEntity.ok("업무가 등록되었습니다.");
     }

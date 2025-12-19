@@ -5,39 +5,43 @@
 <mapper namespace="com.tuk.mina.dao.team.TbTeamUserMapDao">
 
         <select id="getTeamUserMap" resultType="TbTeamUserMapVo">
-                SELECT *
-                FROM TB_MINA_TEAM_USER_M
+                SELECT 
+                        m.*,
+                        u.userName,
+                        u.email
+                FROM TB_MINA_TEAM_USER_L m
+                LEFT JOIN TB_MINA_USER_L u ON m.userId = u.userId
                 WHERE 1=1
                 <if test="teamId != null and teamId != ''">
-                        AND teamId = #{teamId}
+                        AND m.teamId = #{teamId}
                 </if>
                 <if test="userId != null and userId != ''">
-                        AND userId = #{userId}
+                        AND m.userId = #{userId}
                 </if>
                 <if test="memberRole != null and memberRole != ''">
-                        AND memberRole = #{memberRole}
+                        AND m.memberRole = #{memberRole}
                 </if>
                 <if test="memberStatus != null and memberStatus != ''">
-                        AND memberStatus = #{memberStatus}
+                        AND m.memberStatus = #{memberStatus}
                 </if>
                 <if test="memberNick != null and memberNick != ''">
-                        AND memberNick LIKE CONCAT('%', #{memberNick}, '%')
+                        AND m.memberNick LIKE CONCAT('%', #{memberNick}, '%')
                 </if>
                 <if test="createDttm != null and createDttm != ''">
-                        AND createDttm = #{createDttm}
+                        AND m.createDttm = #{createDttm}
                 </if>
                 <if test="updatedDttm != null and updatedDttm != ''">
-                        AND updatedDttm = #{updatedDttm}
+                        AND m.updatedDttm = #{updatedDttm}
                 </if>
         </select>
 
         <insert id="newTeamUserMap" parameterType="TbTeamUserMapVo">
-                INSERT INTO TB_MINA_TEAM_USER_M (teamId, userId, memberRole, memberStatus, memberNick, createDttm, updatedDttm)
+                INSERT INTO TB_MINA_TEAM_USER_L (teamId, userId, memberRole, memberStatus, memberNick, createDttm, updatedDttm)
                 VALUES (#{teamId}, #{userId}, #{memberRole}, #{memberStatus}, #{memberNick}, GETDATE(), GETDATE())
         </insert>
 
         <update id="putTeamUserMap" parameterType="TbTeamUserMapVo">
-                UPDATE TB_MINA_TEAM_USER_M
+                UPDATE TB_MINA_TEAM_USER_L
                 SET
                         <if test="memberRole != null and memberRole != ''">
                                 memberRole = #{memberRole},
@@ -52,10 +56,14 @@
                 WHERE teamId = #{teamId} AND userId = #{userId}
         </update>
 
-        <delete id="delTeamUserMap">
-                <if test="teamId == null AND teamId == '' AND userId == null AND userId == '' ">        
-                        DELETE FROM TB_MINA_TEAM_USER_M
-                        WHERE teamId = #{teamId} AND userId = #{userId}
+        <delete id="delTeamUserMap" parameterType="TbTeamUserMapVo">
+                DELETE FROM TB_MINA_TEAM_USER_L
+                WHERE 1=1
+                <if test="teamId != null and teamId != ''">
+                        AND teamId = #{teamId}
+                </if>
+                <if test="userId != null and userId != ''">
+                        AND userId = #{userId}
                 </if>
         </delete>
 </mapper>

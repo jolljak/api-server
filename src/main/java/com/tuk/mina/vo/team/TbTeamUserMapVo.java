@@ -14,6 +14,8 @@ public class TbTeamUserMapVo {
 
     private Integer teamId;
     private String userId;
+    private String userName;
+    private String email;
     private String memberRole;
     private String memberStatus;
     private String memberNick;

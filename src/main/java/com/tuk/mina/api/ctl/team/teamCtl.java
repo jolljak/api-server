@@ -52,9 +52,16 @@ public class teamCtl {
     @PostMapping
     @Operation(summary = "Create New Team", description = "새로운 팀 등록 API")
     public ResponseEntity<String> newTeam(@RequestBody TbTeamVo param) {
-        param.setCreatedUserId(securityUtil.getAuthUserId().get());
-        param.setUpdatedUserId(securityUtil.getAuthUserId().get()); 
-        teamDao.newTeam(param);
+        String userId = securityUtil.getAuthUserId().get();
+        param.setCreatedUserId(userId);
+        param.setUpdatedUserId(userId); 
+        
+        // [수정] 팀장 ID가 없는 경우 생성자를 팀장으로 지정 (DB NULL 제약 조건 대응)
+        if (param.getTeamLeaderId() == null || param.getTeamLeaderId().isEmpty()) {
+            param.setTeamLeaderId(userId);
+        }
+        
+        teamSvc.createNewTeam(param);
         return ResponseEntity.ok("팀이 등록되었습니다.");
     }
 
@@ -87,6 +94,13 @@ public class teamCtl {
         // teamId가 TbTeamUserMapVo의 필드에 바인딩됨
         List<TbTeamUserMapVo> members = teamSvc.getTeamUserMap(param);
         return ResponseEntity.ok(members);
+    }
+
+    @DeleteMapping("/member")
+    @Operation(summary = "Remove Team Member", description = "팀 멤버 제거 API")
+    public ResponseEntity<String> deleteTeamMember(TbTeamUserMapVo param) {
+        teamSvc.delTeamMember(param);
+        return ResponseEntity.ok("팀 멤버가 삭제되었습니다.");
     }
     
 }

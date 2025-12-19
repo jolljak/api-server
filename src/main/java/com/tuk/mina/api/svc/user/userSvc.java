@@ -75,12 +75,17 @@ public class userSvc {
     }
 
     public UserResponseDto getCurrentUser() {
+        java.util.Optional<String> userIdOpt = SecurityUtil.getAuthUserId();
+        if (userIdOpt.isEmpty()) {
+            return null;
+        }
+        
         TbUserVo userParam = new TbUserVo();
-        userParam.setUserId(securityUtil.getAuthUserId().get());
+        userParam.setUserId(userIdOpt.get());
 
         List<TbUserVo> users = userDao.getUser(userParam);
         if (users.isEmpty()) {
-            throw new UsernameNotFoundException("Authenticated user not found in database.");
+            return null;
         }
         TbUserVo currentUserVo = users.get(0);
 
@@ -92,20 +97,25 @@ public class userSvc {
         userRes.setUserBirth(currentUserVo.getUserBirth());
         userRes.setCreatedDttm(currentUserVo.getCreateDttm());
         userRes.setUpdatedDttm(currentUserVo.getUpdatedDttm());
-        userRes.setTeam(getUserTeamInfo(currentUserVo.getUserId()));
+        userRes.setTeams(getUserTeams(currentUserVo.getUserId()));
 
         return userRes;
     }
 
-    public TbTeamVo getUserTeamInfo(String userId) {
+    public List<TbTeamVo> getUserTeams(String userId) {
         TbTeamUserMapVo param = new TbTeamUserMapVo();
         param.setUserId(userId);
-        List<TbTeamUserMapVo> teamUserMap = teamUserMapDao.getTeamUserMap(null);    
+        List<TbTeamUserMapVo> teamUserMap = teamUserMapDao.getTeamUserMap(param);    
 
-        if (teamUserMap.isEmpty()) return null;
-        
-        TbTeamVo teamParam = new TbTeamVo();
-        teamParam.setTeamId(teamUserMap.get(0).getTeamId());
-        return teamDao.getTeam(teamParam).get(0);
+        java.util.ArrayList<TbTeamVo> teams = new java.util.ArrayList<>();
+        for (TbTeamUserMapVo map : teamUserMap) {
+            TbTeamVo teamParam = new TbTeamVo();
+            teamParam.setTeamId(map.getTeamId());
+            List<TbTeamVo> foundTeams = teamDao.getTeam(teamParam);
+            if (!foundTeams.isEmpty()) {
+                teams.add(foundTeams.get(0));
+            }
+        }
+        return teams;
     }
 }

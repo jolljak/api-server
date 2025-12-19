@@ -8,10 +8,10 @@
                 SELECT *
                 FROM TB_MINA_TASK_L
                 WHERE 1=1
-                <if test="taskId != null and taskId != ''">
+                <if test="taskId != null">
                         AND taskId = #{taskId}
                 </if>
-                <if test="projectId != null and projectId != ''">
+                <if test="projectId != null">
                         AND projectId = #{projectId}
                 </if>
                 <if test="taskStatusId != null and taskStatusId != ''">
@@ -39,13 +39,20 @@
 
         <insert id="newTask" parameterType="TbTaskVo">
                 INSERT INTO TB_MINA_TASK_L (projectId, taskStatusId, userId, taskContent, isDone, createUserId, createdDttm, updatedDttm)
-                VALUES (#{projectId}, #{taskStatusId}, #{userId}, #{taskContent}, #{isDone}, #{createUserId}, GETDATE(), GETDATE())
+                VALUES (#{projectId}, #{taskStatusId}, #{userId}, #{taskContent}, #{isDone}, #{createUserId}, 
+                <if test="createdDttm != null and createdDttm != ''">
+                        #{createdDttm},
+                </if>
+                <if test="createdDttm == null or createdDttm == ''">
+                        GETDATE(),
+                </if>
+                GETDATE())
         </insert>
 
         <update id="putTask" parameterType="TbTaskVo">
                 UPDATE TB_MINA_TASK_L
                 SET
-                <if test="projectId != null and projectId != ''">
+                <if test="projectId != null">
                         projectId = #{projectId},
                 </if>
                 <if test="taskStatusId != null and taskStatusId != ''">
@@ -59,6 +66,9 @@
                 </if>
                 <if test="isDone != null">
                         isDone = #{isDone},
+                </if>
+                <if test="createdDttm != null and createdDttm != ''">
+                        createdDttm = #{createdDttm},
                 </if>
                 updatedDttm = GETDATE()
                 WHERE taskId = #{taskId}

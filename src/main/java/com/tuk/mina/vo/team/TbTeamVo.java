@@ -15,6 +15,7 @@ public class TbTeamVo {
     private Integer teamId;
     private String teamName;
     private String teamLeaderId;
+    private String teamLeaderName;
     private String teamDesc;
     private String createdUserId;
     private String updatedUserId;

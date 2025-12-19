@@ -5,36 +5,39 @@
 <mapper namespace="com.tuk.mina.dao.team.TbTeamDao">
 
         <select id="getTeam" resultType="TbTeamVo">
-                SELECT *
-                FROM TB_MINA_TEAM_L
+                SELECT 
+                        t.*,
+                        u.userName AS teamLeaderName
+                FROM TB_MINA_TEAM_L t
+                LEFT JOIN TB_MINA_USER_L u ON t.teamLeaderId = u.userId
                 WHERE 1=1
                 <if test="teamId != null">
-                        AND teamId = #{teamId}
+                        AND t.teamId = #{teamId}
                 </if>
                 <if test="teamName != null and teamName != ''">
-                        AND teamName LIKE CONCAT('%', #{teamName}, '%')
+                        AND t.teamName LIKE CONCAT('%', #{teamName}, '%')
                 </if>
                 <if test="teamLeaderId != null and teamLeaderId != ''">
-                        AND teamLeaderId = #{teamLeaderId}
+                        AND t.teamLeaderId = #{teamLeaderId}
                 </if>
                 <if test="teamDesc != null and teamDesc != ''">
-                        AND teamDesc LIKE CONCAT('%', #{teamDesc}, '%')
+                        AND t.teamDesc LIKE CONCAT('%', #{teamDesc}, '%')
                 </if>
                 <if test="createdUserId != null and createdUserId != ''">
-                        AND createdUserId = #{createdUserId}
+                        AND t.createdUserId = #{createdUserId}
                 </if>
                 <if test="updatedUserId != null and updatedUserId != ''">
-                        AND updatedUserId = #{updatedUserId}
+                        AND t.updatedUserId = #{updatedUserId}
                 </if>
                 <if test="createDttm != null and createDttm != ''">
-                        AND createDttm = #{createDttm}
+                        AND t.createDttm = #{createDttm}
                 </if>
                 <if test="updatedDttm != null and updatedDttm != ''">
-                        AND updatedDttm = #{updatedDttm}
+                        AND t.updatedDttm = #{updatedDttm}
                 </if>
         </select>
 
-        <insert id="newTeam" parameterType="TbTeamVo">
+        <insert id="newTeam" parameterType="TbTeamVo" useGeneratedKeys="true" keyProperty="teamId" keyColumn="teamId">
                 INSERT INTO TB_MINA_TEAM_L (teamName, teamLeaderId, teamDesc, createdUserId, updatedUserId, createDttm, updatedDttm)
                 VALUES (#{teamName}, #{teamLeaderId}, #{teamDesc}, #{createdUserId}, #{updatedUserId}, GETDATE(), GETDATE())
         </insert>
